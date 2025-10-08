@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import {
   Github,
@@ -8,7 +8,6 @@ import {
   Mail,
   Download,
   MapPin,
-  ExternalLink,
   ChevronRight,
   Briefcase,
   FolderGit2,
@@ -16,10 +15,12 @@ import {
   Code2,
 } from "lucide-react";
 
-import BackgroundFX from "@/components/BackgroundFX";
-import ProjectSlider from "@/components/ProjectSlider";
+// ✅ use RELATIVE imports (no "@/")
+import BackgroundFX from "../components/BackgroundFX";
+import ProjectSlider, { Project } from "../components/ProjectSlider";
 
-// === QUICK CONFIG ===
+/* ------------------------- Config / Data ------------------------- */
+
 const PROFILE = {
   name: "Roshan Kakarla",
   title: "Software Engineer — Backend • Full-Stack • Cloud",
@@ -30,53 +31,39 @@ const PROFILE = {
   links: {
     github: "https://github.com/Rkaka1041",
     linkedin: "https://www.linkedin.com/in/roshan-kakarla",
-    resume: "/Roshan_Kakarla_Resume.pdf",
+    resumePdf: "/resume/Roshan_Kakarla_Resume.pdf",
   },
 };
 
-// Projects (same data as before; keep editing URLs as you like)
-const PROJECTS = [
+const PROJECTS: Project[] = [
   {
     title: "FAITH CHURCH APP",
-    role: "Full-Stack Developer",
-    period: "2024",
     summary:
       "Community events, live sermon streaming, and donations platform using React.js, Firebase, and Flask.",
-    highlights: [
-      "Firebase Auth, Firestore, Cloud Functions for real-time updates",
-      "Serverless backend in Flask; data sync latency reduced ~25%",
-    ],
     stack: ["React.js", "Firebase", "Flask", "Cloud Functions"],
     repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
   {
     title: "SELF CHECK-IN SYSTEM",
-    role: "Full-Stack Developer",
-    period: "2021",
     summary:
-      "Automated check-in and payment system for hospitality with QR validation and secure payments.",
-    highlights: [
-      "Stripe payments integration; QR-based check-in validation",
-      "Deployed via AWS Lambda + S3 for cost-efficient scale",
-    ],
+      "Automated check-in and payment system with QR validation and secure payments.",
     stack: ["FastAPI", "React.js", "Stripe", "PostgreSQL", "AWS"],
     repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
   {
     title: "PARKING LOT SLOT RESERVATION",
-    role: "Backend + Web",
-    period: "2021",
-    summary: "Slot booking with live availability and RBAC for admins/users.",
-    highlights: ["JWT auth; optimized queries to handle 10k+ req/day"],
+    summary:
+      "Slot booking with live availability and RBAC for admins/users.",
     stack: ["Node.js", "Express", "React.js", "MySQL", "JWT"],
     repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
 ];
 
-const SKILLS: Record<string, string[]> = {
+type SkillGroups = Record<string, string[]>;
+const SKILLS: SkillGroups = {
   "Programming Languages": ["Java", "Python", "JavaScript", "TypeScript", "SQL"],
   Frameworks: ["Spring Boot", "FastAPI", "Flask", "React.js"],
   "Cloud & Infra": ["AWS (Lambda, EC2, RDS, S3)", "Docker"],
@@ -85,7 +72,15 @@ const SKILLS: Record<string, string[]> = {
   Methodologies: ["Agile/Scrum", "TDD", "CI/CD"],
 };
 
-const EXPERIENCE = [
+type ExperienceItem = {
+  company: string;
+  role: string;
+  period: string;
+  project: string;
+  bullets: string[];
+};
+
+const EXPERIENCE: ExperienceItem[] = [
   {
     company: "American Express",
     role: "Software Engineer",
@@ -131,13 +126,20 @@ const EXPERIENCE = [
 ];
 
 const ACHIEVEMENTS = [
-  { title: "API speed-ups", desc: "~40% faster responses via SQL tuning & cache strategy." },
-  { title: "Data quality", desc: "~30% accuracy improvement through Python ETL hardening." },
-  { title: "Ops impact", desc: "45% less manual reporting using automated analytics." },
+  { title: "API speed-ups", desc: "~40% faster responses via SQL tuning & caching." },
+  { title: "Data quality", desc: "~30% accuracy improvement via ETL hardening." },
+  { title: "Ops impact", desc: "45% less manual reporting with automated analytics." },
 ];
 
-/* ========= Primitives ========= */
-const Section = ({ id, title, icon: Icon, children }: any) => (
+/* ------------------------- Small UI primitives ------------------------- */
+
+interface SectionProps {
+  id: string;
+  title: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  children: React.ReactNode;
+}
+const Section = ({ id, title, icon: Icon, children }: SectionProps) => (
   <section id={id} className="max-w-6xl mx-auto px-5 sm:px-8 py-12">
     <div className="flex items-center gap-3 mb-6">
       <Icon className="w-5 h-5 text-cyan-300" />
@@ -149,13 +151,13 @@ const Section = ({ id, title, icon: Icon, children }: any) => (
   </section>
 );
 
-const Pill = ({ children }: any) => (
+const Pill = ({ children }: { children: React.ReactNode }) => (
   <span className="inline-block rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-sm leading-6 text-zinc-200">
     {children}
   </span>
 );
 
-const Card = ({ children }: any) => (
+const Card = ({ children }: { children: React.ReactNode }) => (
   <motion.div
     whileHover={{ y: -2 }}
     className="rounded-2xl border border-zinc-800/70 bg-zinc-900/35 backdrop-blur-sm p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] hover:shadow-[0_0_0_1px_rgba(56,189,248,0.45)] transition"
@@ -164,13 +166,14 @@ const Card = ({ children }: any) => (
   </motion.div>
 );
 
-/* ========= Page ========= */
+/* ------------------------------ Page ------------------------------ */
+
 export default function Portfolio() {
   return (
     <div className="min-h-screen text-zinc-100">
       <BackgroundFX />
 
-      {/* Header / Hero */}
+      {/* Hero */}
       <header className="border-b border-zinc-800/80">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
@@ -188,9 +191,12 @@ export default function Portfolio() {
               <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-zinc-400">
                 <MapPin className="w-4 h-4" /> {PROFILE.location}
               </div>
+
+              {/* Actions (Resume now downloads) */}
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
-                  href={PROFILE.links.resume}
+                  href={PROFILE.links.resumePdf}
+                  download
                   className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/60 px-4 py-2 hover:border-cyan-400/60 hover:text-cyan-300"
                 >
                   <Download className="w-4 h-4" /> Resume
@@ -250,8 +256,8 @@ export default function Portfolio() {
       {/* Experience */}
       <Section id="experience" title="Experience" icon={Briefcase}>
         <div className="grid md:grid-cols-3 gap-5">
-          {EXPERIENCE.map((e, idx) => (
-            <Card key={idx}>
+          {EXPERIENCE.map((e) => (
+            <Card key={e.company}>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-zinc-100">{e.company}</h3>
                 <span className="text-xs text-zinc-500">{e.period}</span>
@@ -259,8 +265,8 @@ export default function Portfolio() {
               <p className="text-sm text-zinc-400 mt-0.5">{e.role}</p>
               <p className="text-xs text-zinc-500 mt-1">{e.project}</p>
               <ul className="mt-3 space-y-2 text-sm list-disc pl-5 text-zinc-300">
-                {e.bullets.map((b, i) => (
-                  <li key={i}>{b}</li>
+                {e.bullets.map((b) => (
+                  <li key={b}>{b}</li>
                 ))}
               </ul>
             </Card>
@@ -268,17 +274,9 @@ export default function Portfolio() {
         </div>
       </Section>
 
-      {/* Projects (slider) */}
+      {/* Projects */}
       <Section id="projects" title="Projects" icon={FolderGit2}>
-        <ProjectSlider
-          items={PROJECTS.map((p) => ({
-            title: p.title,
-            summary: p.summary,
-            stack: p.stack,
-            repo: p.repo,
-            demo: p.demo,
-          }))}
-        />
+        <ProjectSlider items={PROJECTS} />
       </Section>
 
       {/* Skills */}
@@ -288,8 +286,8 @@ export default function Portfolio() {
             <Card key={group}>
               <h4 className="font-semibold text-zinc-100">{group}</h4>
               <div className="mt-3 flex flex-wrap gap-2">
-                {items.map((s, i) => (
-                  <Pill key={i}>{s}</Pill>
+                {items.map((s) => (
+                  <Pill key={s}>{s}</Pill>
                 ))}
               </div>
             </Card>
@@ -297,11 +295,11 @@ export default function Portfolio() {
         </div>
       </Section>
 
-      {/* Achievements */}
+      {/* Impact */}
       <Section id="achievements" title="Selected Impact" icon={Award}>
         <div className="grid md:grid-cols-3 gap-5">
-          {ACHIEVEMENTS.map((a, i) => (
-            <Card key={i}>
+          {ACHIEVEMENTS.map((a) => (
+            <Card key={a.title}>
               <h4 className="font-semibold text-zinc-100">{a.title}</h4>
               <p className="text-sm mt-2 leading-6 text-zinc-300">{a.desc}</p>
             </Card>

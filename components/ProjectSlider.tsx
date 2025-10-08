@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 
-type Project = {
+export type Project = {
   title: string;
   summary: string;
   stack: string[];
@@ -13,29 +13,10 @@ type Project = {
 };
 
 export default function ProjectSlider({ items }: { items: Project[] }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const { scrollXProgress } = useScroll({ container: trackRef });
-  const glow = useTransform(scrollXProgress, [0, 1], [0.15, 0.4]);
-
   return (
     <div className="relative">
-      {/* neon edge glow reacts to drag progress */}
-      <motion.div
-        className="pointer-events-none absolute -inset-6 rounded-[2rem] blur-3xl"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(56,189,248,0.25), rgba(168,85,247,0.25))",
-          opacity: glow,
-        }}
-      />
-
-      <motion.div
-        ref={trackRef}
-        className="flex gap-4 overflow-x-auto no-scrollbar py-2 px-1"
-        drag="x"
-        dragConstraints={{ left: -600, right: 0 }}
-        dragElastic={0.08}
-      >
+      {/* Horizontal scroll track */}
+      <div className="flex gap-4 overflow-x-auto no-scrollbar py-2 px-1">
         {items.map((p, i) => (
           <motion.article
             key={i}
@@ -44,7 +25,6 @@ export default function ProjectSlider({ items }: { items: Project[] }) {
           >
             <header className="flex items-start justify-between gap-3">
               <h3 className="text-lg font-semibold">{p.title}</h3>
-              <ExternalLink className="w-4 h-4 text-zinc-400" />
             </header>
 
             <p className="mt-3 text-sm text-zinc-300">{p.summary}</p>
@@ -82,7 +62,7 @@ export default function ProjectSlider({ items }: { items: Project[] }) {
             </div>
           </motion.article>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
