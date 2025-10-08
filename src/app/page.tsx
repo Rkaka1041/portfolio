@@ -16,9 +16,10 @@ import {
   Code2,
 } from "lucide-react";
 
-/* =======================
-   Quick Config
-   ======================= */
+import BackgroundFX from "@/components/BackgroundFX";
+import ProjectSlider from "@/components/ProjectSlider";
+
+// === QUICK CONFIG ===
 const PROFILE = {
   name: "Roshan Kakarla",
   title: "Software Engineer — Backend • Full-Stack • Cloud",
@@ -33,6 +34,7 @@ const PROFILE = {
   },
 };
 
+// Projects (same data as before; keep editing URLs as you like)
 const PROJECTS = [
   {
     title: "FAITH CHURCH APP",
@@ -45,7 +47,7 @@ const PROJECTS = [
       "Serverless backend in Flask; data sync latency reduced ~25%",
     ],
     stack: ["React.js", "Firebase", "Flask", "Cloud Functions"],
-    repo: "https://github.com/Rkaka1041", // replace with exact repo
+    repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
   {
@@ -59,7 +61,7 @@ const PROJECTS = [
       "Deployed via AWS Lambda + S3 for cost-efficient scale",
     ],
     stack: ["FastAPI", "React.js", "Stripe", "PostgreSQL", "AWS"],
-    repo: "https://github.com/Rkaka1041", // replace with exact repo
+    repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
   {
@@ -69,7 +71,7 @@ const PROJECTS = [
     summary: "Slot booking with live availability and RBAC for admins/users.",
     highlights: ["JWT auth; optimized queries to handle 10k+ req/day"],
     stack: ["Node.js", "Express", "React.js", "MySQL", "JWT"],
-    repo: "https://github.com/Rkaka1041", // replace with exact repo
+    repo: "https://github.com/Rkaka1041",
     demo: "#",
   },
 ];
@@ -134,101 +136,7 @@ const ACHIEVEMENTS = [
   { title: "Ops impact", desc: "45% less manual reporting using automated analytics." },
 ];
 
-/* =======================
-   Dark Neon Background (SSR-safe)
-   ======================= */
-type Particle = {
-  top: string;
-  left: string;
-  size: number;
-  delay: number;
-  duration: number;
-  color: string;
-};
-
-function Background() {
-  const [particles, setParticles] = useState<Particle[]>([]);
-
-  useEffect(() => {
-    const newParticles: Particle[] = Array.from({ length: 45 }).map(() => ({
-      top: `${Math.random() * 100}%`,
-      left: `${Math.random() * 100}%`,
-      size: Math.random() * 3 + 1,
-      delay: Math.random() * 5,
-      duration: 5 + Math.random() * 4,
-      color: Math.random() > 0.5 ? "rgba(56,189,248,0.9)" : "rgba(168,85,247,0.9)", // cyan or purple
-    }));
-    setParticles(newParticles);
-  }, []);
-
-  return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#080808]">
-      {/* bold cyan/purple swirls */}
-      <motion.div
-        className="absolute inset-0 opacity-70"
-        style={{
-          background:
-            "radial-gradient(70vmax 70vmax at 15% 20%, rgba(56,189,248,0.35), transparent 70%), radial-gradient(70vmax 70vmax at 85% 80%, rgba(168,85,247,0.35), transparent 70%)",
-        }}
-        animate={{ scale: [1, 1.04, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* central glow */}
-      <div
-        className="absolute inset-0 opacity-60"
-        style={{
-          background:
-            "radial-gradient(40vmax 40vmax at 50% 35%, rgba(99,102,241,0.18), transparent 70%)",
-        }}
-      />
-
-      {/* animated grid */}
-      <motion.div
-        className="absolute inset-0 opacity-[0.12]"
-        style={{
-          backgroundImage:
-            "linear-gradient(0deg, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-        animate={{ backgroundPositionY: ["0px", "48px"] }}
-        transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* brighter particles (client-only) */}
-      {particles.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            top: p.top,
-            left: p.left,
-            background: p.color,
-            boxShadow:
-              "0 0 10px rgba(56,189,248,0.6), 0 0 18px rgba(168,85,247,0.35)",
-          }}
-          animate={{ y: [0, -16, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: p.duration, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-        />
-      ))}
-
-      {/* subtle noise overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E\")",
-        }}
-      />
-    </div>
-  );
-}
-
-/* =======================
-   UI Primitives
-   ======================= */
+/* ========= Primitives ========= */
 const Section = ({ id, title, icon: Icon, children }: any) => (
   <section id={id} className="max-w-6xl mx-auto px-5 sm:px-8 py-12">
     <div className="flex items-center gap-3 mb-6">
@@ -250,72 +158,17 @@ const Pill = ({ children }: any) => (
 const Card = ({ children }: any) => (
   <motion.div
     whileHover={{ y: -2 }}
-    className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] hover:shadow-[0_0_0_1px_rgba(56,189,248,0.35)] transition"
+    className="rounded-2xl border border-zinc-800/70 bg-zinc-900/35 backdrop-blur-sm p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] hover:shadow-[0_0_0_1px_rgba(56,189,248,0.45)] transition"
   >
     {children}
   </motion.div>
 );
 
-/* =======================
-   Project Card (no nested links)
-   ======================= */
-const ProjectCard = ({ p }: any) => (
-  <Card>
-    <div className="flex items-start justify-between gap-3">
-      <div>
-        <h3 className="text-lg font-semibold text-zinc-100">{p.title}</h3>
-        <p className="text-sm text-zinc-400 mt-1">
-          {p.role} · {p.period}
-        </p>
-      </div>
-      <ExternalLink className="w-4 h-4 text-zinc-400" />
-    </div>
-
-    <p className="mt-3 text-sm leading-6 text-zinc-300">{p.summary}</p>
-
-    <ul className="mt-4 space-y-2 text-sm list-disc pl-5 text-zinc-300">
-      {p.highlights.map((h: string, i: number) => (
-        <li key={i}>{h}</li>
-      ))}
-    </ul>
-
-    <div className="mt-4 flex flex-wrap gap-2">
-      {p.stack.map((s: string, i: number) => (
-        <Pill key={i}>{s}</Pill>
-      ))}
-    </div>
-
-    <div className="mt-5 flex items-center gap-4 text-sm text-zinc-300">
-      <a
-        className="inline-flex items-center gap-1 underline hover:text-cyan-300"
-        href={p.repo}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <FolderGit2 className="w-4 h-4" /> Repo
-      </a>
-
-      {p.demo !== "#" && (
-        <a
-          className="inline-flex items-center gap-1 underline hover:text-cyan-300"
-          href={p.demo}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <ExternalLink className="w-4 h-4" /> Live
-        </a>
-      )}
-    </div>
-  </Card>
-);
-
-/* =======================
-   Page
-   ======================= */
+/* ========= Page ========= */
 export default function Portfolio() {
   return (
-    <div className="min-h-screen bg-[#080808] text-zinc-100">
-      <Background />
+    <div className="min-h-screen text-zinc-100">
+      <BackgroundFX />
 
       {/* Header / Hero */}
       <header className="border-b border-zinc-800/80">
@@ -415,13 +268,17 @@ export default function Portfolio() {
         </div>
       </Section>
 
-      {/* Projects */}
+      {/* Projects (slider) */}
       <Section id="projects" title="Projects" icon={FolderGit2}>
-        <div className="grid md:grid-cols-2 gap-6">
-          {PROJECTS.map((p, idx) => (
-            <ProjectCard p={p} key={idx} />
-          ))}
-        </div>
+        <ProjectSlider
+          items={PROJECTS.map((p) => ({
+            title: p.title,
+            summary: p.summary,
+            stack: p.stack,
+            repo: p.repo,
+            demo: p.demo,
+          }))}
+        />
       </Section>
 
       {/* Skills */}
